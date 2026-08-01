@@ -11,6 +11,7 @@ import {
   Rocket,
   Users,
   Crown,
+  ExternalLink,
   type LucideIcon,
 } from "lucide-react";
 import { achievements, leadership } from "@/data/resume";
@@ -62,6 +63,17 @@ export function Achievements() {
 
                   <h3 className="mt-5 font-display text-lg font-bold leading-tight">{a.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted">{a.detail}</p>
+                  {a.link && (
+                    <a
+                      href={a.link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="relative mt-3 inline-flex items-center gap-1 text-xs text-accent hover:underline"
+                      data-cursor="pointer"
+                    >
+                      View proof <ExternalLink size={12} />
+                    </a>
+                  )}
                 </GlowCard>
               </Reveal>
             );

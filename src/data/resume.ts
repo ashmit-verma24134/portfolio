@@ -66,7 +66,12 @@ export const stats = [
   { label: "Hackathon Wins", value: 1, suffix: "" },
 ];
 
-export const interests = ["Football", "3D CAD Modelling", "UI/UX Design"];
+export const interests = [
+  "Competitive Programming",
+  "3D CAD Modelling",
+  "Enterprise Product Design",
+  "Football",
+];
 
 /* --------------------------------- Skills --------------------------------- */
 
@@ -110,11 +115,12 @@ export const skillCategories: SkillCategory[] = [
     icon: "Database",
     accent: "from-emerald-500 to-teal-400",
     skills: [
-      { name: "MongoDB / Atlas", level: 90 },
-      { name: "MySQL", level: 88 },
-      { name: "PostgreSQL", level: 82 },
+      { name: "MySQL", level: 90 },
+      { name: "PostgreSQL", level: 88 },
+      { name: "Supabase", level: 88 },
+      { name: "pgvector", level: 85 },
       { name: "Google Cloud SQL", level: 78 },
-      { name: "Qdrant (Vector)", level: 85 },
+      { name: "Qdrant (Vector)", level: 82 },
     ],
   },
   {
@@ -124,9 +130,9 @@ export const skillCategories: SkillCategory[] = [
     skills: [
       { name: "RAG Pipelines", level: 90 },
       { name: "Agentic Systems", level: 85 },
-      { name: "Atlas Vector Search", level: 88 },
+      { name: "Hybrid Vector + BM25 Search", level: 88 },
       { name: "XGBoost", level: 84 },
-      { name: "BM25 Re-ranking", level: 82 },
+      { name: "HuggingFace Embeddings", level: 82 },
     ],
   },
   {
@@ -146,7 +152,7 @@ export const skillCategories: SkillCategory[] = [
     icon: "Cloud",
     accent: "from-sky-500 to-blue-400",
     skills: [
-      { name: "MongoDB Atlas", level: 88 },
+      { name: "Supabase", level: 88 },
       { name: "Google Cloud SQL", level: 80 },
       { name: "Vercel Serverless", level: 85 },
       { name: "Linux Server Mgmt", level: 84 },
@@ -177,15 +183,15 @@ export const skillCategories: SkillCategory[] = [
 ];
 
 export const expertiseAreas = [
+  "Agentic Systems",
+  "Retrieval-Augmented Generation (RAG)",
   "Data Structures & Algorithms",
   "Software Design",
   "Backend Development",
   "Database Design & Query Optimisation",
-  "NoSQL & Document Data Modelling",
-  "Vector Search",
+  "Relational Data Modelling",
+  "Hybrid (Vector + Keyword) Search",
   "Multi-Tenant Systems",
-  "Agentic Systems",
-  "Retrieval-Augmented Generation (RAG)",
   "Linux Server Management",
 ];
 
@@ -216,15 +222,16 @@ export const experiences: Experience[] = [
     team: "Foqal Analytics",
     period: "May 2026 – Present",
     summary:
-      "CareOS — an AI-powered Clinical Decision Support System for hospital ward monitoring, discharge and billing.",
+      "Production clinical platform — AI discharge summaries with 3-pass verification, XGBoost cost prediction, and live ward deterioration monitoring on real MIMIC-IV EHR data.",
     highlights: [
-      "Drove a billing-critical failure to zero — quoted minimums falling below money already charged, previously 32.4% of estimates — by reframing the model's target so the constraint held by construction, not by post-hoc clamping.",
-      "Sharpened forecasts 4× across a stay (105.7% MAPE at admission → 24.2% by day 10) by engineering cumulative clinical-usage features over MIMIC-IV EHR data (7,077+ cardiology admissions, 46K+ daywise records).",
-      "Beat the production baseline by 3.1 MAPE points (44.5% → 41.3%) on held-out patients by benchmarking 14 model variants and re-architecting the winner as XGBoost quantile regression over remaining, not total, cost.",
-      "Gave nurses one bedside view of deteriorating patients by building a real-time NEWS2 Early Warning System (Vite, JavaScript, FastAPI) with drug–lab interaction alerts, escalation workflows and CCU step-down eligibility.",
-      "Made LLM-generated NABH-compliant discharge summaries legally defensible via audit trails and digital physician sign-off, built into the backend RAG pipeline over MedCPT embeddings in Qdrant.",
+      "Generated 15-section NABH-compliant discharge summaries via a 3-pass LLM pipeline — extract clinical facts to strict JSON, stream section-wise generation, then audit each section against only its own authorised sources, so the verifier cannot rubber-stamp its own context.",
+      "Made the output legally defensible by building a tiered clinical safety gate (T1 formatting / T2 medication-error / T3 critical) that catches hallucinated labs, wrong drug or dose and missed allergies — hard-blocking doctor sign-off until every T3 flag is resolved, with digital signature, version history and a full audit trail.",
+      "Trained an XGBoost quantile-regression model (P10/P50/P90) predicting remaining hospital cost day by day over 7,077 admissions / 46,145 day-wise rows / 63 features — cutting held-out test MAPE from 47.3% to 41.3%, with reframing the target from total bill to remaining cost alone driving 46.1% → 41.3%.",
+      "Narrowed the train/test gap from 38.4/47.3% to 35.4/41.3%, confirming the model generalises rather than overfits, and sharpened predictions ~4× across a stay (≈103% MAPE at admission → ≈21% by day 10).",
+      "Drove a 32.4% floor-violation rate to zero by construction — quoted minimums no longer fall below money the hospital has already billed.",
+      "Improved Day-0 cost accuracy from 103.5% to 88.4% MAPE by engineering a shrinkage-based diagnosis cost-band feature bucketing all 1,317 diagnoses by cost — replacing an 'Other' catch-all that gave zero signal on 1,302 rare diagnoses.",
     ],
-    stack: ["XGBoost", "FastAPI", "Vite", "JavaScript", "Qdrant", "RAG", "MIMIC-IV", "MedCPT"],
+    stack: ["XGBoost", "FastAPI", "LLM Pipelines", "MIMIC-IV", "Quantile Regression", "Python"],
   },
   {
     company: "Meeting-Aware Persona-Based Instructor Agent",
@@ -234,14 +241,16 @@ export const experiences: Experience[] = [
     summary:
       "An AI teammate that sits in your meetings and Slack, then answers questions about them — grounded strictly in what was actually said.",
     highlights: [
-      "Made a 4-source knowledge base queryable in natural language by building a RAG pipeline on MongoDB Atlas, modelling transcripts, chunks and embeddings as single documents — no join at query time — with Groq-hosted Llama 3.1 8B.",
-      "Turned raw meeting URLs into knowledge with no manual upload by engineering a real-time ingestion pipeline integrating a teammate's ML video-processing API for keyframe-level transcript extraction, normalised alongside live Slack history, PDFs and links into one corpus.",
-      "Guaranteed no user can retrieve another tenant's data by enforcing isolation at the Atlas Vector Search index itself — $vectorSearch pre-filters on user and date backed by compound indexes — not post-retrieval filtering.",
-      "Lifted recall on ambiguous questions while stopping invented answers by layering BM25 over vector results with overlap re-ranking, then gating every response on lexical/entailment overlap via an LLM verifier that abstains instead of guessing.",
-      "Took the system to production in Slack by building a FastAPI server with signature verification, idempotent-upsert ingestion, MongoDB aggregation pipelines for session history and a 9-stage LangGraph state machine routing each query, deployed serverlessly on Vercel.",
+      "Made a 4-source knowledge base queryable in natural language by building a RAG pipeline on Supabase Postgres + pgvector — transcripts, Slack, PDFs and links chunked into one table with self-hosted HuggingFace embeddings — served by Groq Llama 3.1 8B.",
+      "Guaranteed no user can retrieve another tenant's data by keying each tenant to its Slack channel and enforcing isolation inside the pgvector retrieval RPC — user- and date-scoped filters applied in the SQL query itself, not post-retrieval.",
+      "Lifted recall on ambiguous questions while stopping invented answers by fusing pgvector similarity with Postgres BM25 (overlap-boosted, keyword-reranked), then gating every response on retrieval sufficiency so the LLM abstains instead of guessing.",
+      "Took the system to production in Slack by building a FastAPI server with request-signature verification, two-layer event dedup (in-process + Supabase ON CONFLICT) for serverless retries, Postgres session history and a 9-stage LangGraph state machine, deployed serverlessly on Vercel.",
       "Made the agent proactive, not reactive, by shipping a cron-scheduled supervisor that rebuilds an evolving goal document on every ingestion and auto-delivers Slack check-ins from goals, recent meetings and prior Q&A — over multi-tenant storage with persistent chat memory.",
     ],
-    stack: ["MongoDB Atlas", "LangGraph", "FastAPI", "Vector Search", "BM25", "Llama 3.1", "Vercel", "Slack API"],
+    stack: ["Supabase", "pgvector", "LangGraph", "FastAPI", "BM25", "Llama 3.1", "Vercel", "Slack API"],
+    // NOTE: the repo is currently PRIVATE, so no link is surfaced — a visitor
+    // clicking through would hit a 404. Make it public to re-enable:
+    // link: "https://github.com/ashmit-verma24134/Meeting-Aware-Persona-Based-Instructor-Agent",
   },
 ];
 
@@ -280,7 +289,7 @@ export const projects: Project[] = [
     ],
     challenges:
       "Delivering a polished, custom-designed analog aesthetic while wiring live streaming APIs reliably — under hackathon time pressure.",
-    github: "https://github.com/ashmit-verma24134",
+    github: "https://github.com/ashmit-verma24134/osdc-hack",
     featured: true,
     award: "🏆 OSDC Hackathon Winner 2025",
     category: "Frontend / Design",
@@ -301,7 +310,7 @@ export const projects: Project[] = [
     ],
     challenges:
       "Enforcing strict role-based access and referential integrity across two databases while keeping the service layer modular and testable.",
-    github: "https://github.com/ashmit-verma24134",
+    github: "https://github.com/ashmit-verma24134/AP_PROJECT_2025",
     featured: true,
     category: "Backend / Systems",
   },
@@ -321,7 +330,7 @@ export const projects: Project[] = [
     ],
     challenges:
       "Guaranteeing consistent inventory state under concurrent updates while automating low-stock reordering with triggers and stored procedures.",
-    github: "https://github.com/ashmit-verma24134",
+    github: "https://github.com/ashmit-verma24134/RAASHAN",
     category: "Databases",
   },
   {
@@ -340,8 +349,27 @@ export const projects: Project[] = [
     ],
     challenges:
       "Correctly resolving forward references in two passes and matching cycle-accurate execution traces against a reference implementation.",
-    github: "https://github.com/ashmit-verma24134",
+    github: "https://github.com/ashmit-verma24134/CO_Project",
     category: "Low-level / Systems",
+  },
+  {
+    title: "Rent-a-Roll — App Design & User Research",
+    tagline: "UI/UX for a game rental platform",
+    description:
+      "Spearheaded UI/UX design for a game rental platform targeting economic barriers to gaming. Translated extensive user research into precise Lo-Fi and Hi-Fi prototypes in Figma.",
+    team: "Team Size · 4",
+    period: "Aug 2024 – Nov 2024",
+    stack: ["Figma", "User Research", "Lo-Fi / Hi-Fi Prototyping", "UI/UX"],
+    features: [
+      "Extensive user research translated into design decisions",
+      "Lo-Fi and Hi-Fi prototypes built in Figma",
+      "Intuitive explore section for browsing titles",
+      "Seamless checkout flow and community forums",
+    ],
+    challenges:
+      "Designing around a real economic barrier rather than a hypothetical one — turning open-ended user research into concrete flows that stayed intuitive through checkout.",
+    github: "https://github.com/ashmit-verma24134/Rent_a_Roll",
+    category: "Design / Product",
   },
 ];
 
@@ -353,6 +381,8 @@ export type Achievement = {
   icon: string;
   tag: string;
   accent: string;
+  /** Optional proof link (certificate, writeup). */
+  link?: string;
 };
 
 export const achievements: Achievement[] = [
@@ -364,10 +394,10 @@ export const achievements: Achievement[] = [
     accent: "from-cyan-500 to-blue-500",
   },
   {
-    title: "Flipkart GRiD 8.0 — Semi-Finalist",
-    detail: "Advanced to the semi-finals of Flipkart GRiD 8.0, one of India's largest national engineering campus challenges.",
+    title: "Flipkart GRiD 8.0 — National Semi-Finalist",
+    detail: "Advanced to the national semi-finals of Flipkart GRiD 8.0, one of India's largest engineering campus challenges.",
     icon: "Rocket",
-    tag: "Semi-Finalist",
+    tag: "National Semi-Finalist",
     accent: "from-amber-400 to-orange-500",
   },
   {
@@ -385,18 +415,20 @@ export const achievements: Achievement[] = [
     accent: "from-emerald-500 to-teal-500",
   },
   {
-    title: "OSDC Hackathon Winner 2025",
-    detail: "1st Prize for RAD.YO — Retro Digital Radio at the OSDC Hackathon.",
+    title: "JIIT Retro OSDC Hackathon Winner 2025",
+    detail: "1st Prize for RAD.YO — a web radio app with a custom SVG speaker UI designed in Adobe Illustrator and Photoshop.",
     icon: "Trophy",
     tag: "1st Prize",
     accent: "from-fuchsia-500 to-pink-500",
+    link: "https://drive.google.com/file/d/1FLiWsLC7oGBjm9rgF1Px-2IaJ4448AE2/view",
   },
   {
     title: "CTF Winner (DSA)",
-    detail: "Won the DSA Capture-The-Flag challenge at the OSDC Hackathon.",
+    detail: "Won the DSA Capture-The-Flag challenge at the same JIIT Retro OSDC Hackathon.",
     icon: "Flag",
     tag: "CTF",
     accent: "from-violet-500 to-indigo-500",
+    link: "https://drive.google.com/file/d/12DoeDR8jyNCnB_aL8l7uh5aEK7oom6vP/view",
   },
   {
     title: "250+ DSA Problems",
