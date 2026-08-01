@@ -1,0 +1,169 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ */
+/*  Design tokens — dark by default, light mode via [data-theme]      */
+/* ------------------------------------------------------------------ */
+:root,
+:root[data-theme="dark"] {
+  --background: 222 47% 4%;
+  --foreground: 210 40% 98%;
+  --muted: 215 20% 65%;
+  --card: 222 40% 8%;
+  --border: 215 28% 20%;
+  --accent: 217 91% 60%;
+  --accent-soft: 199 89% 60%;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --background: 210 40% 98%;
+  --foreground: 222 47% 11%;
+  --muted: 215 16% 40%;
+  --card: 0 0% 100%;
+  --border: 214 32% 85%;
+  --accent: 217 91% 55%;
+  --accent-soft: 199 89% 48%;
+  color-scheme: light;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  overflow-x: hidden;
+  font-feature-settings: "cv11", "ss01";
+}
+
+/* ------------------------------- Scrollbar ------------------------------- */
+::selection {
+  background: hsl(var(--accent) / 0.3);
+  color: hsl(var(--foreground));
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(hsl(var(--accent) / 0.6), hsl(var(--accent-soft) / 0.6));
+  border-radius: 999px;
+  border: 2px solid hsl(var(--background));
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(hsl(var(--accent)), hsl(var(--accent-soft)));
+}
+
+/* ------------------------------ Utilities -------------------------------- */
+@layer components {
+  /* NOTE: no backdrop-filter here on purpose. `.glass` is used by ~20 cards
+     that scroll past an animating canvas; each blurred backdrop forces the
+     compositor to re-sample the layers behind it every frame, which was the
+     single biggest source of scroll jank. A slightly more opaque background
+     reads the same at a fraction of the cost. */
+  .glass {
+    background: hsl(var(--card) / 0.72);
+    border: 1px solid hsl(var(--border) / 0.7);
+  }
+
+  /* Reserved for the few *fixed* surfaces (nav, palette) where real blur is
+     cheap because they never move relative to what's behind them. */
+  .glass-strong {
+    background: hsl(var(--card) / 0.85);
+    backdrop-filter: blur(14px) saturate(170%);
+    -webkit-backdrop-filter: blur(14px) saturate(170%);
+    border: 1px solid hsl(var(--border) / 0.8);
+  }
+
+  .text-gradient {
+    background: linear-gradient(120deg, #60a5fa 0%, #22d3ee 40%, #818cf8 75%, #c084fc 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: gradient-x 6s ease infinite;
+  }
+
+  .text-gradient-static {
+    background: linear-gradient(120deg, #60a5fa 0%, #22d3ee 50%, #818cf8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Animated gradient border wrapper */
+  .gradient-border {
+    position: relative;
+    border-radius: inherit;
+  }
+  .gradient-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, hsl(var(--accent) / 0.8), transparent 40%, transparent 60%, hsl(var(--accent-soft) / 0.7));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .glow-ring {
+    box-shadow:
+      0 0 0 1px hsl(var(--accent) / 0.25),
+      0 0 30px -8px hsl(var(--accent) / 0.55);
+  }
+
+  .section-pad {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Focus visibility for accessibility */
+:focus-visible {
+  outline: 2px solid hsl(var(--accent));
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Marquee */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
